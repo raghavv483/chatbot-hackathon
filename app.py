@@ -19,6 +19,7 @@ logging.basicConfig(level=logging.ERROR)
 
 # Set environment variables
 os.environ['HF_HUB_DISABLE_SYMLINKS_WARNING'] = '1'
+os.environ['GOOGLE_API_KEY'] = 'AIzaSyA2XmTAncsUZogi6RFkS_oUCbgNIKe5Aaw'
 
 # Try to import required libraries with fallbacks
 try:
