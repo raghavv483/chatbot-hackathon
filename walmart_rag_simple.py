@@ -23,22 +23,22 @@ os.environ['HF_HUB_DISABLE_SYMLINKS_WARNING'] = '1'
 
 # Try to import required libraries with fallbacks
 try:
-    import pandas as pd
-    import numpy as np
+    import pandas as pd  # type: ignore
+    import numpy as np  # type: ignore
     PANDAS_AVAILABLE = True
 except ImportError:
     print("⚠ pandas not available, using basic data structures")
     PANDAS_AVAILABLE = False
 
 try:
-    from sentence_transformers import SentenceTransformer
+    from sentence_transformers import SentenceTransformer  # type: ignore
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
     print("⚠ sentence-transformers not available")
     SENTENCE_TRANSFORMERS_AVAILABLE = False
 
 try:
-    import chromadb
+    import chromadb  # type: ignore
     CHROMADB_AVAILABLE = True
 except ImportError:
     print("⚠ chromadb not available")
@@ -47,9 +47,9 @@ except ImportError:
 # Optional LLM imports
 LLM_AVAILABLE = False
 try:
-    from langchain_google_genai import ChatGoogleGenerativeAI
-    from langchain_core.prompts import PromptTemplate
-    from langchain.chains import LLMChain
+    from langchain_google_genai import ChatGoogleGenerativeAI  # type: ignore
+    from langchain_core.prompts import PromptTemplate  # type: ignore
+    from langchain.chains import LLMChain  # type: ignore
     LLM_AVAILABLE = True
 except ImportError:
     print("⚠ langchain packages not available, using mock responses")
@@ -75,6 +75,9 @@ class SimpleDataFrame:
     
     def __len__(self):
         return len(next(iter(self.data.values()))) if self.data else 0
+    
+    def __iter__(self):
+        return iter(self.data)
     
     def iterrows(self):
         for i in range(len(self)):
@@ -275,6 +278,10 @@ class WalmartRAGSystem:
         try:
             self.documents = []
             self.metadatas = []
+            
+            if self.df is None:
+                print("✗ No data available")
+                return False
             
             for idx, row in self.df.iterrows():
                 # Create rich document text
@@ -549,18 +556,18 @@ Response:
             
             # Count unique values
             if PANDAS_AVAILABLE:
-                print(f"  • Categories: {self.df['category'].nunique()}")
-                print(f"  • Brands: {self.df['brand'].nunique()}")
-                print(f"  • Stores: {self.df['store_location'].nunique()}")
-                print(f"  • Average Price: ₹{self.df['price'].mean():.0f}")
-                print(f"  • Average Discount: {self.df['discount'].mean():.1f}%")
+                print(f"  • Categories: {self.df['category'].nunique()}")  # type: ignore
+                print(f"  • Brands: {self.df['brand'].nunique()}")  # type: ignore
+                print(f"  • Stores: {self.df['store_location'].nunique()}")  # type: ignore
+                print(f"  • Average Price: ₹{self.df['price'].mean():.0f}")  # type: ignore
+                print(f"  • Average Discount: {self.df['discount'].mean():.1f}%")  # type: ignore
             else:
                 # Manual counting for SimpleDataFrame
                 categories = set(self.df['category'])
                 brands = set(self.df['brand'])
                 stores = set(self.df['store_location'])
-                avg_price = sum(self.df['price']) / len(self.df['price'])
-                avg_discount = sum(self.df['discount']) / len(self.df['discount'])
+                avg_price = sum(self.df['price']) / len(self.df['price'])  # type: ignore
+                avg_discount = sum(self.df['discount']) / len(self.df['discount'])  # type: ignore
                 
                 print(f"  • Categories: {len(categories)}")
                 print(f"  • Brands: {len(brands)}")

@@ -267,6 +267,10 @@ class WalmartRAGSystem:
             self.documents = []
             self.metadatas = []
             
+            if self.df is None:
+                print("✗ No data available")
+                return False
+            
             for idx, row in self.df.iterrows():
                 # Create rich document text
                 doc_text = (
