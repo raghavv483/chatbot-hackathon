@@ -644,8 +644,16 @@ if FASTAPI_AVAILABLE:
         """Initialize the RAG system on startup."""
         global rag_system
         print("🚀 Starting Walmart RAG API...")
+        # Start RAG system initialization in background
+        import asyncio
+        asyncio.create_task(initialize_rag_background())
+        print("✅ API startup complete - RAG system initializing in background")
+    
+    async def initialize_rag_background():
+        """Initialize RAG system in background."""
+        global rag_system
         rag_system = initialize_rag_system()
-        print("✅ API startup complete")
+        print("✅ RAG system initialization complete")
     
     @app.get("/", response_model=Dict[str, str])
     async def root():
@@ -653,12 +661,18 @@ if FASTAPI_AVAILABLE:
         return {
             "message": "Walmart RAG API is running!",
             "version": "1.0.0",
+            "status": "starting",
             "endpoints": {
                 "health": "/health",
                 "query": "/query",
                 "docs": "/docs"
             }
         }
+    
+    @app.get("/ready", response_model=Dict[str, str])
+    async def ready_check():
+        """Simple readiness check for Render."""
+        return {"status": "ready", "message": "API is ready to receive requests"}
     
     @app.get("/health", response_model=HealthResponse)
     async def health_check():
